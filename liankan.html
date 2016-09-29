@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>连连看</title>
+</head>
+<style>
+	body{
+		background-color: #888;
+	}
+	#time,#time_range{
+		width: 420px;
+		height: 20px;
+		border-radius: 10px;
+		margin: 20px auto;
+		background-color: #eee;
+	}
+	#time_range{
+		margin-right: 0;
+		background-color: green;
+	}
+	ul{
+		margin: 50px auto;
+		width: 400px;
+		height: 400px;
+		padding: 0;
+		list-style: none;
+	}
+	li{
+		float: left;
+		width: 46px;
+		height: 46px;
+		margin: 0px;
+		border: 2px solid #333;
+		background-color: #333;
+	}
+	img{
+		width: 100%;
+		height: 100%;
+	}
+	.active{
+		border: 2px solid #2c2;
+	}
+</style>
+<body>
+	<div class="time" id="time">
+		<div id="time_range"></div>
+	</div>
+	<ul class="ul">
+		
+	</ul>
+<script src="jquery.min.js"></script>
+<script>
+	function range(){
+		var img_num = 0;
+		var width = $('#time_range').width()-1;
+		for(var i = 0;i<64;i++){
+				if($('ul li').eq(i).attr('data-flag') == 'not'){
+					img_num++;
+				}
+			}
+		if(width == 50){
+			$('#time_range').css('background-color','red');
+		}
+		if(img_num == 64){
+			alert('你牛逼！');
+			clearInterval(daojishi);
+		}
+		if(width == 0){
+			clearInterval(daojishi);
+			if(img_num != 64){
+				alert('你真笨啊！');
+			}
+		}
+		$('#time_range').width(width);
+	}
+	var daojishi = setInterval(range,200);
+	var imgarr = ['01.jpg','02.jpg','03.jpg','04.jpg','05.jpg','06.jpg','07.jpg','08.jpg','09.jpg','10.jpg','11.jpg','12.jpg','13.jpg','14.jpg','15.jpg','16.jpg'];
+	imgarr = imgarr.concat(imgarr);
+	imgarr = imgarr.concat(imgarr);
+	imgarr.sort(function(){
+		return Math.random()-0.5;
+	})
+	//console.log(imgarr);
+	for(var i = 0;i < 64;i++){
+		$('.ul').append('<li data-flag="false"><img src="img/'+imgarr[i]+'"/></li>');
+	}
+	var img1 = -1,img2 = -1;
+	$('ul li').on('click',function(){
+		var index = $(this).index();
+		if($(this).attr('data-flag')=="false"){
+			$('ul li').eq(index).addClass('active');
+			$(this).attr('data-flag','true');
+			if(img1 >= 0){
+				img2 = index;
+			}else{
+				img1 = index;
+			}
+		}else if($(this).attr('data-flag')=="true"){
+			$('ul li').eq(index).removeClass('active');
+			$(this).attr('data-flag','false');
+			img1 = -1;
+		}
+		if(img1>=0 && img2>=0){
+			if($('ul li').eq(img1).find('img').attr('src') == $('ul li').eq(img2).find('img').attr('src')){		
+				$('ul li').eq(img1).removeClass('active').attr('data-flag','not').find('img').remove();
+				$('ul li').eq(img2).removeClass('active').attr('data-flag','not').find('img').remove();
+			}else{
+				$('ul li').eq(img1).removeClass('active').attr('data-flag','false');
+				$('ul li').eq(img2).removeClass('active').attr('data-flag','false');
+			}
+			img1 = -1;
+			img2 = -1;
+		}
+	})
+</script>
+</body>
+</html>
